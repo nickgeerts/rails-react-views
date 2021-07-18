@@ -39,21 +39,26 @@
     "react-dom": "17.0.2"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.24",
     "@types/node": "^15.12.4",
     "@types/react": "^17.0.9",
     "@types/react-dom": "^17.0.6",
+    "jest": "^27.0.6",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "ts-jest": "^27.0.3",
     "typescript": "^4.3.2"
   },
   "scripts": {
-    "clean": "rm -fr dist/*",
     "build": "yarn clean && yarn build:esm && yarn build:cjs && yarn build:packages && yarn build:bin",
     "build:dev": "tsc -p tsconfig.esm.json --watch",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:packages": "cp config/package.cjs.json dist/cjs/package.json && cp config/package.esm.json dist/esm/package.json",
     "build:bin": "chmod +x dist/cjs/bin/rails-react-views.js",
+    "ci": "yarn typecheck && yarn test",
+    "clean": "rm -fr dist/*",
+    "test": "jest src/tests",
     "typecheck": "tsc --noEmit -p ."
   }
 }
