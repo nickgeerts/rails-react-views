@@ -5,7 +5,7 @@ module RailsReactViews
     def render_react_view(view: nil, props: {}, prerender: true, cache: true, layout: nil)
       view ||= "#{controller_path}/#{action_name}"
       layout ||= RailsReactViews::config[:layout]
-      context = RailsReactViews::Prerenderer.build_context(view: view, props: props, path: request.path)
+      context = RailsReactViews::Prerenderer.build_context(view: view, props: props, path: request.fullpath)
 
       respond_to do |format|
         format.html do

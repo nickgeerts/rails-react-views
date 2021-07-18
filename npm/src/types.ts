@@ -31,6 +31,11 @@ export type Transition = {
   duration?: number
 }
 
+export type PushOptions = {
+  shallow?: boolean
+  scroll?: boolean
+}
+
 export type RailsReactViewsConfig = {
   server: boolean
   port: number

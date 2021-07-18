@@ -2,12 +2,12 @@ import React, { createContext, ReactNode, useEffect, useReducer } from 'react'
 
 import { State, Action, reducer, defaultState } from './reducer'
 import { Transitioner } from './Transitioner'
-import { Loader, Transition } from './types'
+import { Loader, Transition, PushOptions } from './types'
 
 type TContext = {
   state: State
   dispatch: (action: Action) => void
-  loadPage: (path: string, pushState: boolean) => void
+  loadPage: (path: string, options: PushOptions) => void
   path: string
   view: string
 }
@@ -53,25 +53,29 @@ function Provider({ children, transition, loader, view, path }: Props) {
   }, [])
 
   useEffect(() => {
-    if (!loading && !transitioning) {
+    if (!loading && !transitioning && state.scroll) {
       window.scrollTo({ top: 0 })
     }
   }, [loading, transitioning])
 
   function updatePage() {
-    loadPage(window.location.pathname, false)
+    loadPage(window.location.pathname, { shallow: true, scroll: true })
   }
 
-  async function loadPage(path: string, pushState: boolean) {
+  async function loadPage(path: string, options: PushOptions = {}) {
     if (!loader) return
 
-    if (pushState) history.pushState({}, '', path)
+    history.pushState({}, '', path)
+    if (options.shallow) {
+      if (options.scroll) window.scrollTo({ top: 0 })
+      return
+    }
 
     if (transition?.duration) {
-      dispatch({ type: 'ROUTING_STARTED', path, transitioning: true })
+      dispatch({ type: 'ROUTING_STARTED', path, transitioning: true, scroll: !!options.scroll })
       setTimeout(() => dispatch({ type: 'TRANSITION_ENDED' }), transition?.duration)
     } else {
-      dispatch({ type: 'ROUTING_STARTED', path, transitioning: false })
+      dispatch({ type: 'ROUTING_STARTED', path, transitioning: false, scroll: !!options.scroll })
     }
 
     const context = await loadPageContext(path)

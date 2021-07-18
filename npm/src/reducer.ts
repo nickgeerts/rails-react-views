@@ -10,6 +10,7 @@ export type State = {
   nextComponent: null | FC
   nextProps: object
   Component: null | FC
+  scroll: boolean
   ready: boolean
 }
 
@@ -21,6 +22,7 @@ export type Action =
       type: 'ROUTING_STARTED'
       path: string
       transitioning: boolean
+      scroll: boolean
     }
   | {
       type: 'TRANSITION_ENDED'
@@ -43,6 +45,7 @@ const defaultState: State = {
   nextProps: {},
   loading: false,
   transitioning: false,
+  scroll: true,
   ready: false
 }
 
@@ -52,7 +55,13 @@ function reducer(state: State = defaultState, action: Action): State {
       return { ...state, ready: true }
 
     case 'ROUTING_STARTED':
-      return { ...state, loading: true, transitioning: action.transitioning, path: action.path }
+      return {
+        ...state,
+        loading: true,
+        transitioning: action.transitioning,
+        path: action.path,
+        scroll: action.scroll
+      }
 
     case 'TRANSITION_ENDED':
       if (state.loading) {

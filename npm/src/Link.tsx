@@ -2,32 +2,20 @@ import React, { ReactNode, MouseEvent } from 'react'
 
 import { useRouter } from './hooks'
 
-// const BaseLink = styled.a`
-//   display: inline-block;
-// `
-
 type Props = {
-  as?: 'span'
-  className?: string
   href: string
   children: ReactNode
+  shallow?: boolean
+  scroll?: boolean
 }
 
-function Link({ href, as, children, ...props }: Props) {
+function Link({ href, children, shallow, scroll, ...props }: Props) {
   const router = useRouter()
 
   function onClick(event: MouseEvent) {
     event.preventDefault()
-    router.push(href)
+    router.push(href, { shallow, scroll })
   }
-
-  // if (as) {
-  //   return (
-  //     <a onClick={(event: MouseEvent) => onClick(event)} {...props} as={as}>
-  //       {children}
-  //     </a>
-  //   )
-  // }
 
   return (
     <a href={href} onClick={(event: MouseEvent) => onClick(event)} {...props}>
