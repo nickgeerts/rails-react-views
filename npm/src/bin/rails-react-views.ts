@@ -14,6 +14,7 @@ function help() {
 }
 
 function dev() {
+  // Using BABEL_ENV=test to target CommonJS syntax
   execSync(
     "BABEL_ENV=test node_modules/.bin/babel-node -x '.js,.jsx,.ts,.tsx' node_modules/rails-react-views/dist/cjs/server/scripts/watcher.js",
     {
@@ -23,6 +24,7 @@ function dev() {
 }
 
 async function prerender(view: string, props: string = '{}') {
+  // Using BABEL_ENV=test to target CommonJS syntax
   execSync(
     `BABEL_ENV=test node_modules/.bin/babel-node -x '.js,.jsx,.ts,.tsx' node_modules/rails-react-views/dist/cjs/server/scripts/prerender.js '${view}' '${props}'`,
     { stdio: 'inherit' }
@@ -31,6 +33,7 @@ async function prerender(view: string, props: string = '{}') {
 
 function build() {
   console.log('Building production rails-react-views server views...')
+  // Using BABEL_ENV=test to target CommonJS syntax
   execSync(
     "rm -rf .rails-react-views && BABEL_ENV=test node_modules/.bin/babel -x '.js,.jsx,.ts,.tsx' rails-react-views.config.* -d .rails-react-views && BABEL_ENV=test node_modules/.bin/babel -x '.js,.jsx,.ts,.tsx' app/javascript -d .rails-react-views/app/javascript"
   )
