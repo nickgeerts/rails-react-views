@@ -1,3 +1,5 @@
+require 'zlib'
+
 module RailsReactViews
   class Prerenderer
     class << self
@@ -17,10 +19,32 @@ module RailsReactViews
 
       def build_context(props: {}, view:, path:)
         {
-          props: props,
           view: view,
-          path: base_path(path)
+          path: base_path(path),
+          props: props
         }
+      end
+
+      def encode_text(text)
+        gzipped_text = Zlib::Deflate.deflate(text)
+        Base64.strict_encode64(gzipped_text)
+      end
+
+      def decode_text(text)
+        decoded_text = Base64.strict_decode64(text)
+        Zlib::Inflate.inflate(decoded_text).force_encoding('utf-8')
+      end
+
+      def split_html(html = '')
+        head_start = html.index('<head>')
+        head_end = html.index('</head>')
+        head = (head_start && head_end ? html[head_start + 6..head_end - 1] : '').html_safe
+
+        body_start = html.index('<body>')
+        body_end = html.index('</body>')
+        body = (body_start && body_end ? html[body_start + 6..body_end - 1] : '').html_safe
+
+        { head: head, body: body }
       end
 
       private
@@ -49,45 +73,17 @@ module RailsReactViews
 
       def cmd_prerender(context_json)
         encoded_context = encode_text(context_json)
-        encoded_html =
-          if Rails.env.production?
-            `NODE_ENV=production node node_modules/rails-react-views/dist/cjs/server/scripts/cmd.js #{encoded_context}`
-          else
-            `BABEL_ENV=test node_modules/.bin/babel-node -x '.js,.jsx,.ts,.tsx' node_modules/rails-react-views/dist/cjs/server/scripts/cmd.js #{encoded_context}`
-          end
-
+        encoded_html = RailsReactViews::Shell.cmd(encoded_context)
         html = decode_text(encoded_html)
         split_html(html)
       end
 
-      def encode_text(text)
-        gzipped_text = Zlib::Deflate.deflate(text)
-        Base64.strict_encode64(gzipped_text)
-      end
-
-      def decode_text(text)
-        decoded_text = Base64.strict_decode64(text)
-        Zlib::Inflate.inflate(decoded_text).force_encoding('utf-8')
-      end
-
       def base_path(path)
-        if path.ends_with?('.json')
+        if path.end_with?('.json')
           path[0..-6]
         else
           path
         end
-      end
-
-      def split_html(html = '')
-        head_start = html.index('<head>')
-        head_end = html.index('</head>')
-        head = (head_start && head_end ? html[head_start + 6..head_end - 1] : '').html_safe
-
-        body_start = html.index('<body>')
-        body_end = html.index('</body>')
-        body = (body_start && body_end ? html[body_start + 6..body_end - 1] : '').html_safe
-
-        { head: head, body: body }
       end
 
       def server?
