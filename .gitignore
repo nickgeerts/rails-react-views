@@ -7,3 +7,5 @@ dist
 
 # Ruby
 *.gem
+Gemfile
+Gemfile.lock
