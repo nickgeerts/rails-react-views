@@ -87,7 +87,7 @@ function Provider({ children, transition, loader, view, path }: Props) {
 
   async function loadPageContext(path: string) {
     // Redirect if no JSON found
-    const response = await fetch(`${path}.json`, { headers: { Accept: 'application/json' } })
+    const response = await fetch(path, { headers: { Accept: 'application/json' } })
     if (!response.ok) window.location.href = path
 
     // Redirect if no valid Rails React View context
