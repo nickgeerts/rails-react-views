@@ -1,6 +1,6 @@
 {
   "name": "rails-react-views",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A library for full integration of React.js views in Ruby on Rails.",
   "repository": "https://github.com/njjkgeerts/rails-react-views",
   "author": "Nick Geerts",
@@ -15,6 +15,7 @@
       "require": "./dist/cjs/index.js"
     },
     "./server": {
+      "import": "./dist/esm/server/index.js",
       "require": "./dist/cjs/server/index.js"
     }
   },
