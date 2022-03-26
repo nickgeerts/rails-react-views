@@ -18,7 +18,7 @@ function useRouter() {
     loadPage(path, options)
   }
 
-  return { pathname, search, query, loading: loading || transitioning, push }
+  return { path, pathname, search, query, loading: loading || transitioning, push }
 }
 
 export { useRouter }
