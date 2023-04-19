@@ -6,6 +6,8 @@ module RailsReactViews
       end
 
       def config
+        return default_config unless File.exists?(Rails.root.join('node_modules/rails-react-views/dist/cjs/server/scripts/config.js'))
+
         `#{node} node_modules/rails-react-views/dist/cjs/server/scripts/config.js`
       end
 
@@ -18,6 +20,10 @@ module RailsReactViews
           # Using BABEL_ENV=test to target CommonJS syntax
           "BABEL_ENV=test node_modules/.bin/babel-node -x '.js,.jsx,.ts,.tsx'"
         end
+      end
+
+      def default_config
+        '{"server":true,"port":3030,"workers":8,"cmd":true,"layout":"application","prerender":"default"}'
       end
     end
   end
